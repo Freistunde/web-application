@@ -1,0 +1,32 @@
+{
+  "name": "web-application",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "dev-frontend": "cd client && set WEBPACK_ENV=dev && webpack --progress --colors --watch",
+    "build-frontend": "cd client && set WEBPACK_ENV=production && webpack"
+  },
+  "dependencies": {
+    "bootstrap": "^4.1.1",
+    "bootstrap-vue": "^2.0.0-rc.9",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.16.0",
+    "morgan": "~1.9.0",
+    "vue": "^2.5.16"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-es2015": "^6.24.1",
+    "css-loader": "^0.28.11",
+    "uglifyjs-webpack-plugin": "^1.2.5",
+    "vue-hot-reload-api": "^2.3.0",
+    "vue-html-loader": "^1.2.4",
+    "vue-loader": "^15.0.10",
+    "vue-template-compiler": "^2.5.16",
+    "webpack": "^4.8.2",
+    "webpack-cli": "^2.1.3"
+  }
+}
