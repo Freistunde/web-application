@@ -4,12 +4,14 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "dev": "",
-    "build": "",
+    "dev": "concurrently \"yarn dev-frontend\" \"yarn dev-backend\"",
+    "build": "yarn dev-frontend",
     "dev-frontend": "cd frontend && cross-env NODE_ENV=development webpack-dev-server --open --hot",
-    "build-frontend": "cd frontend && cross-env NODE_ENV=production webpack --progress --hide-modules"
+    "build-frontend": "cd frontend && cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "dev-backend": "nodemon backend/server.js"
   },
   "dependencies": {
+    "concurrently": "^3.5.1",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "express": "~4.16.0",
