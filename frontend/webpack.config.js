@@ -8,6 +8,17 @@ module.exports = {
     publicPath: '/dist/',
     filename: 'build.js'
   },
+  plugins: [
+    new webpack.ProvidePlugin({
+      mapboxgl: 'mapbox-gl'
+    }),/*
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jquery: 'jquery',
+      'window.jQuery': 'jquery',
+      jQuery: 'jquery'
+    })*/
+  ],
   module: {
     rules: [
       {
