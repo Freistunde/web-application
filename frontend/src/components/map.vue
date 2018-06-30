@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Mapbox :access-token="mb.accessToken" :map-options="mb.mapOptions" :geolocate-control="mb.geolocateControl" :scale-control="mb.scaleControl" :fullscreen-control="mb.fullscreenControl" @map-load="mapLoad">
+    <Mapbox :access-token="mb.accessToken" :map-options="mb.mapOptions" :geolocate-control="mb.geolocateControl" :scale-control="mb.scaleControl" :fullscreen-control="mb.fullscreenControl" @map-load="mapLoad" @map-init="mapInitialized">
     </Mapbox>
   </div>
 </template>
@@ -14,11 +14,13 @@ export default {
     Mapbox
   },
   methods: {
+    mapInitialized(map) {
+      this.map = map;
+      this.showActivities(activityMock);
+    },
     mapLoad(map) {
-      console.log("MAP LOADED");
       // Insert the layer beneath any symbol layer.
       var layers = map.getStyle().layers;
-
       var labelLayerId;
       for (var i = 0; i < layers.length; i++) {
         if (layers[i].type === "symbol" && layers[i].layout["text-field"]) {
@@ -26,7 +28,6 @@ export default {
           break;
         }
       }
-
       map.addLayer(
         {
           id: "3d-buildings",
@@ -37,7 +38,6 @@ export default {
           minzoom: 15,
           paint: {
             "fill-extrusion-color": "#aaa",
-
             // use an 'interpolate' expression to add a smooth transition effect to the
             // buildings as the user zooms in
             "fill-extrusion-height": [
@@ -63,36 +63,17 @@ export default {
         },
         labelLayerId
       );
-
-      const markers = {
-        type: "FeatureCollection",
-        features: [
-          {
-            type: "Feature",
-            geometry: {
-              type: "Point",
-              coordinates: [7.262179, 51.443018]
-            },
-            properties: {
-              title: "Mapbox",
-              description: "Ruhr Universität Mensa"
-            }
-          },
-          {
-            type: "Feature",
-            geometry: {
-              type: "Point",
-              coordinates: [7.270899, 51.447625]
-            },
-            properties: {
-              title: "Mapbox",
-              description: "Hochschule Bochum"
-            }
-          }
-        ]
-      };
-
-      markers.features.forEach(function(marker) {
+    },
+    showDetailModal: function(id) {
+      this.$root.$refs.detailview.showModal(id);
+    },
+    showActivities: function(activities) {
+      var map = this.map;
+      console.log('Adding Activities');
+      var oldmarkers = new mapboxgl.Marker().setLngLat([0,0]).addTo(map);
+      oldmarkers.remove();
+      var list = createMarkerList(activities);
+      list.features.forEach(function(marker) {
         // create a HTML element for each feature
         var el = document.createElement("div");
         el.className = "marker";
@@ -103,12 +84,10 @@ export default {
           .setPopup(
             new mapboxgl.Popup({ offset: 25 }) // add popups
               .setHTML(
-                `<h3>
-                ${marker.properties.title}
-                </h3>
-                <p>
-                ${marker.properties.description}
-                <p>`
+                `<div class="card-body">
+                  <h5 class="card-title">${marker.properties.title}</h5>
+                  <a href="#" @click="showDetailModal(marker.properties.id)" class="btn btn-primary">Mehr Infos</a>
+                </div>`
               )
           )
           .addTo(map);
@@ -117,6 +96,7 @@ export default {
   },
   data: () => {
     return {
+      map: {},
       mb: {
         accessToken:
           "pk.eyJ1IjoibWFpaGVpIiwiYSI6ImNqaDZidHIwejFqbTQzMm8yczA5ZXg2eGkifQ.wvhQbFLBEgt1NONFroy1dg",
@@ -144,6 +124,55 @@ export default {
     };
   }
 };
+
+var transformToMarker = function(activity) {
+  return {
+    type: "Feature",
+    geometry: {
+      type: "Point",
+      coordinates: activity.coordinates
+    },
+    properties: {
+      title: activity.title,
+      description: activity.description,
+      id: activity.id
+    }
+  };
+};
+
+var createMarkerList = function(activities) {
+  var markers = {
+    type: "FeatureCollection",
+    features: []
+  };
+
+  for (var count in activities) {
+    markers.features.push(transformToMarker(activities[count]));
+  }
+
+  return markers;
+};
+
+var activityMock = [
+  {
+    title: "Hochschule",
+    description: "Nicht so geil",
+    duration: 30,
+    voting: 4,
+    id: "act1",
+    coordinates: [7.270899, 51.447625],
+    categoriesID: ["cat1", "cat2"]
+  },
+  {
+    title: "Ruhr Uni",
+    description: "Auch nicht so geil",
+    duration: 30,
+    voting: 4,
+    id: "act1",
+    coordinates: [7.262179, 51.443018],
+    categoriesID: ["cat1", "cat2"]
+  }
+];
 </script>
 
 <style lang="scss">

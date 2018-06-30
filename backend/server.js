@@ -4,10 +4,11 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const debug = require('debug')('web-application:server');
 const http = require('http');
+const cors = require('cors');
 
 // Require REST-Routes
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+const categoriesRouter = require('./routes/categories');
+const activitiesRouter = require('./routes/activities');
 
 // APP-Instance
 const app = express();
@@ -17,10 +18,11 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(cors());
 
 // Set REST-Routes
-app.use('/api', indexRouter);
-app.use('/users', usersRouter);
+app.use('/api/categories', categoriesRouter);
+app.use('/api/activities', activitiesRouter);
 
 // Get port from environment and store in Express.
 const port = normalizePort(process.env.PORT || '3000');

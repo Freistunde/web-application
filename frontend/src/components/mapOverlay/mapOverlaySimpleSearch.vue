@@ -1,21 +1,16 @@
 <template>
-  <div class="text-light mx-3">
-    <div class="text-center">
-      <img src="./../../assets/Freistunde_Icon.svg" class="fs-logo my-2" />
-    </div>
-
-    <b-form @search="onSearch" @extendedSearch="onExtendedSearch" v-if="show">
-      <b-form-group id="exampleInputGroup1" label="Wo soll es hin gehen?" label-for="exampleInput1">
-        <b-form-input id="exampleInput1" type="email" v-model="form.destination" placeholder="Stadt, Ort, Land, ...">
-        </b-form-input>
-      </b-form-group>
-      <b-form-group id="exampleInputGroup3" label="Wie viel Zeit hast du?" label-for="exampleInput3">
-        <b-form-select id="exampleInput3" :options="times" v-model="form.time">
-        </b-form-select>
-      </b-form-group>
-      <b-button type="search" variant="primary" class="fs-bg">SUCHEN!</b-button>
-      <b-button type="extendedSearch" variant="outline-light" class="float-right">Erweiterte Suche</b-button>
-    </b-form>
+  <div class="text-light mx-3 py-3 w-100">
+    <b-input-group class="w-100">
+      <b-form-select class="border border-light" v-model="form.menu" :options="menufields" />
+      <b-form-input class="border border-light" v-if="form.menu === 'place'" v-model="form.searchstring" placeholder="Stadt, Postleitzahl oder Ort"></b-form-input>
+      <b-form-select class="border border-light" v-if="form.menu === 'time'" v-model="form.time" :options="times" />
+      <b-input-group-append>
+        <b-btn variant="light" class="border border-light" @click="onSearch">
+          <span class="fa fa-search"></span>
+        </b-btn>
+        <b-btn variant="light" class="border border-light">Erweiterte Suche</b-btn>
+      </b-input-group-append>
+    </b-input-group>
   </div>
 </template>
 
@@ -24,38 +19,42 @@ export default {
   data() {
     return {
       form: {
-        destination: "",
-        time: ""
+        menu: "place",
+        time: null,
+        searchstring: "",
       },
+      menufields: [
+        {
+          value: "place",
+          text: "Wo soll es hin gehen?"
+        },
+        {
+          value: "time",
+          text: "Wir viel Zeit hast du?"
+        }
+      ],
       times: [
         { text: "Wähle einen Zeitraum", value: null },
-        "30 Minuten",
-        "1 Stunde",
-        "2 Stunden",
-        "3 Stunden"
+        { text: "30 Minuten", value: 30 },
+        { text: "1 Stunde", value: 60 },
+        { text: "2 Stunden", value: 120 },
+        { text: "3 Stunden", value: 180 }
       ],
-      show: true
+
     };
   },
   methods: {
     onSearch(evt) {
       evt.preventDefault();
+      this.$parent.$parent.$refs.map.showActivities();
       alert(JSON.stringify(this.form));
     },
     onExtendedSearch(evt) {
-      this.$emit('showextendedsearch');
+      this.$emit("showextendedsearch");
     }
   }
 };
 </script>
 
 <style lang="scss">
-.fs-logo {
-  max-height: 150px;
-  max-width: 50%;
-}
-
-.fs-bg {
-  background: #005b96;
-}
 </style>

@@ -1,129 +1,109 @@
 <template>
   <div id="app">
-    <Navbar class="position-fixed w-100 border-bottom border-light" style="z-index: 3000;"></Navbar>
-    <div class="position-relative header-height-with-offset" id="header">
-      <div class="position-absolute w-100 header-height header-offset">
-        <Map class="header-height">
-        </Map>
-      </div>
-      <div class="position-absolute w-50 header-offset">
-        <div class="w-75 header-height">
-          <MapOverlayBasic>
-          </MapOverlayBasic>
-        </div>
-      </div>
-    </div>
+    <div class="ct" id="t1">
+      <div class="ct" id="t2">
+        <div class="ct" id="t3">
+          <div class="ct" id="t4">
+            <div class="ct" id="t5">
 
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col">
-          <div class="text-center my-4">
-            <b-btn variant="primary" class="fs-bg" href="#getstarted">Mehr Informationen!</b-btn>
+              <!-- Menu -->
+              <ul id="menu">
+                <a href="#t1">
+                  <li class="icon fa fs-icon" id="home">
+                    <img src="./assets/Freistunde_Icon.svg" />
+                  </li>
+                </a>
+                <a href="#t2">
+                  <li class="icon far fa-map" id="search"></li>
+                </a>
+                <a href="#t3">
+                  <li class="icon far fa-clone" id="categories"></li>
+                </a>
+                <a href="#t4">
+                  <li class="icon far fa-lightbulb" id="idea"></li>
+                </a>
+                <a href="#t5">
+                  <li class="icon fa fa-users" id="aboutus"></li>
+                </a>
+              </ul>
+
+              <!-- Content -->
+              <!-- Home -->
+              <div class="page" id="p1">
+                <section class="icon fa">
+                  <img src="./assets/Freistunde_Icon.svg" class="home-icon" />
+                  <span class="title">Freistunde</span>
+                  <p class="hint">
+                    Wo deine Zeit dir gehört!
+                  </p>
+                </section>
+              </div>
+
+              <!-- Search -->
+              <div class="page" id="p2">
+                <MapsSection class="h-100"></MapsSection>
+              </div>
+
+              <!-- Categories -->
+              <div class="page" id="p3">
+                <CategorySection class="h-100 w-body"></CategorySection>
+              </div>
+
+              <!-- Idea -->
+              <div class="page" id="p4">
+                <IdeaSection class="h-100 w-body"></IdeaSection>
+              </div>
+
+              <!-- Team -->
+              <div class="page" id="p5">
+                <TeamSection class="h-100 w-body"></TeamSection>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="container-fluid fs-bg text-light " id="getstarted">
-      <div class="row section-height">
-        <div class="col-12 align-self-center">
-          <div class="container">
-            <div class="row">
-              <div class="col-12">
-                <div class="text-center">
-                  <h3>Spruch</h3>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-4"></div>
-              <div class="col-4">
-                <hr />
-              </div>
-              <div class="col-4"></div>
-            </div>
-            <div class="row">
-              <div class="col-12 text-center">
-                <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et</p>
-                <b-btn variant="light" size="lg">Jetzt anmelden!</b-btn>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-12 align-self-end text-center my-5">
-          <a href="#categories" class="text-light"><i class="fas fa-angle-down fa-2x"></i></a>
-        </div>
-      </div>
-    </div>
-
-    <div class="container-fluid" id="categories">
-      <div class="row">
-        <div class="col">
-          <div class="text-center my-4">
-            <h3>Kategorien</h3>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <CategorySection id="content2">
-    </CategorySection>
+    <ActivityModal ref="detailview"></ActivityModal>
   </div>
 </template>
 
 <script>
-import Navbar from "./components/navbar";
-import Map from "./components/map";
 import MapOverlayBasic from "./components/mapOverlay/mapOverlayBasic";
 import CategorySection from "./components/categoriesSection";
-/*
-$('a.js-scroll-trigger[href*="#"]:not([href="#"])').click(function() {
-    if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
-      var target = $(this.hash);
-      target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
-      if (target.length) {
-        $('html, body').animate({
-          scrollTop: (target.offset().top - 57)
-        }, 1000, "easeInOutExpo");
-        return false;
-      }
-    }
-  });
-*/
+import MapsSection from "./components/mapsSection";
+import IdeaSection from "./components/ideaSection";
+import TeamSection from "./components/teamSection";
+import ActivityModal from "./components/activityModal";
+
 export default {
   components: {
-    Navbar,
-    Map,
+    MapsSection,
     MapOverlayBasic,
-    CategorySection
+    CategorySection,
+    IdeaSection,
+    TeamSection,
+    ActivityModal
   },
   data() {
     return {
       msg: "Welcome to Your Vue.js App",
       message: "Hello"
-    };
+    }
   }
 };
 </script>
 
 <style lang="scss">
-.header-height {
-  height: 500px;
+.home-icon {
+  height: 20vh;
 }
 
-.header-height-with-offset {
-  height: 560px;
+.w-body {
+  width: 90vw;
 }
 
-.fs-bg {
-  background: #005b96;
-}
-
-.section-height {
-  height: 100vh;
-}
-
-.header-offset {
-  margin-top: 60px;
+.fs-icon img {
+  width: 40px;
+  height: auto;
 }
 </style>
