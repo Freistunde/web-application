@@ -1,5 +1,28 @@
 var express = require('express');
 var router = express.Router();
+var mysql = require('mysql');
+
+
+//Database con
+
+var con = mysql.createConnection({
+  host: "freistunde.webhop.me",
+  user: "webt2",
+  password: "webt2t1",
+  database: "freistunde"
+});
+
+var activityData;
+
+con.connect(function(err) {
+  if (err) throw err;
+  con.query("SELECT * FROM Aktivität", function (err, result, fields) {
+    if (err) throw err;
+    activityData = result;
+  });
+});
+
+
 
 var activityMock = [
   {
@@ -29,7 +52,7 @@ router.get('/', function(req, res, next) {
    * get all activities from the database
    */
 
-  res.status(200).send(activityMock);
+  res.status(200).send(activityData);
 });
 
 // GET /api/activities/id/:id
@@ -41,7 +64,21 @@ router.get('/id/:id', function(req,res,next) {
    * Search in database for an activityID and set below
    */
 
+ 
+  var sql = 'SELECT * FROM Aktivität WHERE Aktivität_ID = ' + activityID;
+ 
+  con.query(sql, function (err, activity) {
+  if (err) throw err;
+  if (!activity.length) res.status(400).send('No activity found');   
+	else res.status(200).send(activity);	
+  });
+   
+  
+  /*
   var activity = activityMock.filter(x => x.id === activityID);
+  */
+  
+  /*
   if(activity.length === 1) {
     res.status(200).send(activity[0]);
   } else if (activity.length > 1) {
@@ -49,6 +86,8 @@ router.get('/id/:id', function(req,res,next) {
   } else {
     res.status(400).send('No activity found');
   }
+    */
+
 });
 
 // GET /api/activities/place/:place
