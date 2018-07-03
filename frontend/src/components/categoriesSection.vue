@@ -19,9 +19,9 @@
     <div class="row w-100 no-gutters p-2">
       <div v-show="!detailedView">
         <b-card-group columns>
-          <b-card class="text-dark border-0" v-for="category in categories" :key="category.id" :title="category.title" :img-src="'http://localhost:3000/api/categories/img/' + category.id" img-fluid :img-alt="category.id" img-top>
-            <p v-if="category.description" class="card-text">
-              {{category.description}}
+          <b-card class="text-dark border-0" v-for="category in categories" :key="category.Kat_ID" :title="category.Name" :img-src="'http://localhost:3000/api/categories/img/' + category.Kat_ID" img-fluid :img-alt="category.Kat_ID" img-top>
+            <p v-if="category.Beschreibung" class="card-text">
+              {{category.Beschreibung}}
             </p>
             <small v-if="category.childs" class="text-muted">{{category.childs}} Aktivitäten</small>
             <b-button href="#" v-on:click="setview" variant="primary">Go somewhere</b-button>
