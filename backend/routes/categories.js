@@ -139,6 +139,7 @@ router.get('/search/:query', function(req, res, next) {
 
   var q = req.params.query;
 
+  
   /* TODO:
    * Search in DB in categories attributes for the above searchstring (q) and set below
    */
@@ -151,14 +152,19 @@ router.get('/search/:query', function(req, res, next) {
   if (!sqlresult.length) res.status(404).send('No category found');   
 	else results = sqlresult;	
 	
-	if (results.length != -1) {
+	if (typeof results !== "undefined") {
       res.status(200).send(results);
     } else {
+	  //res.status(200).send(results);
       res.status(404).send('No categories found');
     }
   });
 
-  
+});
+router.get('/search/', function(req, res, next) {
+
+  res.status(200).send(categoryData);
+  console.log("test");   
 });
 
 module.exports = router;
