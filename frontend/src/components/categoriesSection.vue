@@ -18,13 +18,14 @@
     </div>
     <div class="row w-100 no-gutters p-2">
       <div v-show="!detailedView">
+	    <p class="text-dark border-0" id="ViewCategories">  </p>
         <b-card-group columns>
-          <b-card class="text-dark border-0" v-for="category in categories" :key="category.id" :title="category.title" :img-src="'http://localhost:3000/api/categories/img/' + category.id" img-fluid :img-alt="category.id" img-top>
-            <p v-if="category.description" class="card-text">
-              {{category.description}}
+          <b-card class="text-dark border-0" v-for="category in categories" :key="category.Kat_ID" :title="category.Name" :img-src="'http://localhost:3000/api/categories/img/' + category.Kat_ID" img-fluid :img-alt="category.Kat_ID" img-top>
+            <p v-if="category.Beschreibung" class="card-text">
+              {{category.Beschreibung}}
             </p>
             <small v-if="category.childs" class="text-muted">{{category.childs}} Aktivitäten</small>
-            <b-button href="#" v-on:click="setview" variant="primary">Go somewhere</b-button>
+            <b-button @click="setview(category.Kat_ID)" variant="primary">Details</b-button>
           </b-card>
         </b-card-group>
       </div>
@@ -36,11 +37,11 @@
       <div v-show="detailedView">
         <b-card-group>
           <b-card class="text-dark border-0">
-            <p class="card-text">
+            <p class="card-text" id="catsford">
               Testtext
             </p>
-            <small class="text-muted">Aktivitäten</small>
-            <b-button href="#" v-on:click="resetview" variant="primary">Go somewhere</b-button>
+            <small class="text-muted">Aktivitäten</small></br></br>
+            <b-button @click="resetview" variant="primary">Zurück</b-button>
           </b-card>
         </b-card-group>
       </div>
@@ -68,8 +69,8 @@ export default {
   },
   created() {
     var el = this.$el;
-    axios.get("http://localhost:3000/api/categories/").then(response => {
-      this.categories = response.data;
+    axios.get("http://localhost:3000/api/categories/").then(response => {     
+	  this.categories = response.data;
     });
 
     this.debouncedSearch = _.debounce(this.search, 500);
@@ -78,16 +79,31 @@ export default {
     search: function() {
       axios
         .get("http://localhost:3000/api/categories/search/" + this.searchbar)
-        .then(response => {
+        .then(response => {	
+	document.getElementById("ViewCategories").innerHTML = "";		
           this.categories = response.data;
-        });
+        })
+		.catch(error => {
+		  this.categories = null;
+		  document.getElementById("ViewCategories").innerHTML = "No Categories found";
+		  console.log(error.response.status);
+		});
     },
     quartered: function(offset) {
       return this.categories.filter((cat, idx) => (idx - offset) % 4 === 0);
     },
-    setview: function() {
-      console.log('setting')
-      this.detailedView = true;
+    setview: function(id) {
+      axios
+        .get("http://localhost:3000/api/categories/" + id + "/activities/")
+        .then(response => {	
+	    document.getElementById("catsford").innerHTML = JSON.stringify(response.data);
+        this.detailedView = true;
+        })
+		.catch(error => {
+		  document.getElementById("catsford").innerHTML = JSON.stringify(error.response.data);
+          this.detailedView = true;
+		});
+	  
     },
     resetview: function() {
       this.detailedView = false;

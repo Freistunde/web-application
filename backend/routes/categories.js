@@ -2,6 +2,17 @@ var express = require('express');
 var fs = require('fs');
 var path = require('path');
 var router = express.Router();
+var mysql = require('mysql');
+
+
+//Database con
+
+var con = mysql.createConnection({
+  host: "freistunde.webhop.me",
+  user: "webt2",
+  password: "webt2t1",
+  database: "freistunde"
+});
 
 var categoryMock = [
   {
@@ -73,6 +84,16 @@ var categoryMock = [
   }
 ];
 
+var categoryData;
+
+  con.connect(function(err) {
+    if (err) throw err;
+    con.query("SELECT * FROM Kategorie", function (err, result, fields) {
+      if (err) throw err;
+      categoryData = result;
+    });
+  });
+
 // GET /api/categories/
 router.get('/', function(req,res, next) {
 
@@ -80,7 +101,7 @@ router.get('/', function(req,res, next) {
    * Get all Categories from DB
    */
 
-  res.status(200).send(categoryMock);
+  res.status(200).send(categoryData);
 });
 
 // GET /api/categories/img/:categoryid
@@ -93,12 +114,23 @@ router.get('/img/:categoryid', function(req, res, next) {
    */
 
   var img;
-
-  if(img) {
-    res.status(200).contentType('image').end(img, 'binary');
-  } else {
-    res.status(404).send('No image found');
-  }
+  
+  var sql = 'SELECT * FROM Kategorie WHERE Kat_ID = ' + categoryID;
+ 
+  con.query(sql, function (err, sqlresult) {
+  if (err) throw err;
+  if (!sqlresult.length) res.status(404).send('No category found');   
+	else img = sqlresult[0].imgUrl;
+	
+	if(img) {		
+	  res.status(200).sendFile(path.resolve(__dirname+'/../assets/'+img));
+      //res.status(200).contentType('image').end(img, 'binary');
+    } else {	  
+      res.status(404).send('No image found');
+    }
+  });
+   
+ 
 });
 
 // GET /api/categories/search/:query
@@ -106,17 +138,41 @@ router.get('/search/:query', function(req, res, next) {
 
   var q = req.params.query;
 
+  
   /* TODO:
    * Search in DB in categories attributes for the above searchstring (q) and set below
    */
 
   var results;
+  var sql = 'SELECT * FROM Kategorie WHERE Name Like \'%' + q +'%\' OR Beschreibung Like \'%' + q +'%\'';
+ 
+  con.query(sql, function (err, sqlresult) {
+  if (err) throw err;
+  if (!sqlresult.length) res.status(404).send('No category found');   
+	else res.status(200).send(sqlresult);		
+  });
 
-  if (results.length != -1) {
-    res.status(200).send(results);
-  } else {
-    res.status(404).send('No categories found');
-  }
+});
+router.get('/search/', function(req, res, next) {
+  res.status(200).send(categoryData);    
+});
+
+
+// GET /api/categories/activities
+router.get('/:id/activities/', function(req, res, next) {
+
+  var id = req.params.id;
+
+  var sql = 'SELECT Aktivität.* FROM Aktivität '+
+			'LEFT JOIN Kategorie_Aktivität ON Aktivität.Aktivität_ID = Kategorie_Aktivität.Aktivität_ID '+
+			'LEFT JOIN Kategorie ON Kategorie_Aktivität.Kat_ID = Kategorie.Kat_ID '+
+			'WHERE (Kategorie.Kat_ID = '+id+')';
+ 
+  con.query(sql, function (err, sqlresult) {
+  if (err) throw err;
+  if (!sqlresult.length) res.status(404).send('No activities found');   
+	else res.status(200).send(sqlresult);		
+  });
 });
 
 module.exports = router;

@@ -8,7 +8,7 @@
       </div>
     </div>
     <div class="row w-100 no-gutters p-2 border border-bottom-0 border-left-0 border-right-0">
-      <b-btn @click="showModal('act1')">Test Modal</b-btn>
+      <b-btn @click="showModal('1')">Test Modal</b-btn>
       <!--
         TODO:
         Add a text about our idea

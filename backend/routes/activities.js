@@ -1,5 +1,28 @@
 var express = require('express');
 var router = express.Router();
+var mysql = require('mysql');
+
+
+//Database con
+
+var con = mysql.createConnection({
+  host: "freistunde.webhop.me",
+  user: "webt2",
+  password: "webt2t1",
+  database: "freistunde"
+});
+
+var activityData;
+
+con.connect(function(err) {
+  if (err) throw err;
+  con.query("SELECT * FROM Aktivität", function (err, result, fields) {
+    if (err) throw err;
+    activityData = result;
+  });
+});
+
+
 
 var activityMock = [
   {
@@ -29,8 +52,28 @@ router.get('/', function(req, res, next) {
    * get all activities from the database
    */
 
-  res.status(200).send(activityMock);
+  res.status(200).send(activityData);
 });
+
+// POST /api/activities/
+router.post('/', function(req, res) {
+
+  /* TODO:
+   * create an activity and add to the database
+   */
+  var sql = 'INSERT INTO Aktivität (Aktivität_ID, Name, Wetterabhängigkeit, Rating, Personenanzahl_min, Personenanzahl_max, Kommentar, Ort_ID, Zeiten_ID) VALUES ('+req.body.ID+', \''+req.body.Name+'\', \''+req.body.Wetter+'\', 3, 2, 5, \'Hahahahah\', 4, 1)';
+  con.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log("1 record inserted");
+  });
+   
+   
+  res.json({ message: 'Post erfolgreich' });
+  
+  
+  
+});
+
 
 // GET /api/activities/id/:id
 router.get('/id/:id', function(req,res,next) {
@@ -41,7 +84,21 @@ router.get('/id/:id', function(req,res,next) {
    * Search in database for an activityID and set below
    */
 
+ 
+  var sql = 'SELECT Aktivität.*, Ort.* FROM Ort LEFT JOIN Aktivität ON Aktivität.Ort_ID = Ort.Ort_ID WHERE Aktivität_ID = ' + activityID;
+ 
+  con.query(sql, function (err, activity) {
+  if (err) throw err;
+  if (!activity.length) res.status(400).send('No activity found');   
+	else res.status(200).send(activity);	
+  });
+   
+  
+  /*
   var activity = activityMock.filter(x => x.id === activityID);
+  */
+  
+  /*
   if(activity.length === 1) {
     res.status(200).send(activity[0]);
   } else if (activity.length > 1) {
@@ -49,6 +106,8 @@ router.get('/id/:id', function(req,res,next) {
   } else {
     res.status(400).send('No activity found');
   }
+    */
+
 });
 
 // GET /api/activities/place/:place
@@ -59,14 +118,17 @@ router.get('/place/:place', function(req,res,next) {
   /* TODO:
    * Search in database for activities with value "place" (see above) and set it below.
    */
-
-  var activities = [];
-
+   var sql = 'SELECT Aktivität.*, Ort.* FROM Ort LEFT JOIN Aktivität ON Aktivität.Ort_ID = Ort.Ort_ID WHERE (Ort.Stadt = \''+place+'\')';
+ 
+  con.query(sql, function (err, activities) {
+  if (err) throw err;
   if(activities.length != -1) {
     res.status(200).send(activities);
   } else {
     res.status(400).send('No activity found');
-  }
+  }	
+  });
+    
 });
 
 // GET /api/activities/duration/:duration
