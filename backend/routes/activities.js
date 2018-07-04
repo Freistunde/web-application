@@ -68,7 +68,7 @@ router.post('/', function(req, res) {
   });
    
    
-  res.json({ message: 'Bear created!'+req.body.Name });
+  res.json({ message: 'Post erfolgreich' });
   
   
   
