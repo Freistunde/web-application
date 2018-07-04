@@ -25,7 +25,7 @@
               {{category.Beschreibung}}
             </p>
             <small v-if="category.childs" class="text-muted">{{category.childs}} Aktivitäten</small>
-            <b-button href="#" v-on:click="setview" variant="primary">Go somewhere</b-button>
+            <b-button @click="setview(category.Kat_ID)" variant="primary">Go somewhere</b-button>
           </b-card>
         </b-card-group>
       </div>
@@ -37,11 +37,11 @@
       <div v-show="detailedView">
         <b-card-group>
           <b-card class="text-dark border-0">
-            <p class="card-text">
+            <p class="card-text" id="catsford">
               Testtext
             </p>
             <small class="text-muted">Aktivitäten</small>
-            <b-button href="#" v-on:click="resetview" variant="primary">Go somewhere</b-button>
+            <b-button @click="resetview" variant="primary">Go somewhere</b-button>
           </b-card>
         </b-card-group>
       </div>
@@ -92,9 +92,18 @@ export default {
     quartered: function(offset) {
       return this.categories.filter((cat, idx) => (idx - offset) % 4 === 0);
     },
-    setview: function() {
-      console.log('setting')
-      this.detailedView = true;
+    setview: function(id) {
+      axios
+        .get("http://localhost:3000/api/categories/" + id + "/activities/")
+        .then(response => {	
+	    document.getElementById("catsford").innerHTML = JSON.stringify(response.data);
+        this.detailedView = true;
+        })
+		.catch(error => {
+		  document.getElementById("catsford").innerHTML = JSON.stringify(error.response.data);
+          this.detailedView = true;
+		});
+	  
     },
     resetview: function() {
       this.detailedView = false;

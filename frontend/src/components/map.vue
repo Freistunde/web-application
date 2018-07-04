@@ -16,11 +16,12 @@ export default {
   methods: {
     mapInitialized(map) {
       this.map = map;
-      this.showActivities(activityMock);
+	  this.Markers = [];
+      //this.showActivities(activityMock);
     },
     mapLoad(map) {
       // Insert the layer beneath any symbol layer.
-      var layers = map.getStyle().layers;
+      var layers = map.getStyle().layers;	   
       var labelLayerId;
       for (var i = 0; i < layers.length; i++) {
         if (layers[i].type === "symbol" && layers[i].layout["text-field"]) {
@@ -64,34 +65,41 @@ export default {
         labelLayerId
       );
     },
-    showDetailModal: function(id) {
+    showDetailModal: function(id) {	  
       this.$root.$refs.detailview.showModal(id);
     },
+	clearMap: function() {      
+	  alert("Noch nicht bereit");
+    },
     showActivities: function(activities) {
-      var map = this.map;
+      var map = this.map;	  
       console.log('Adding Activities');
+	 
       var oldmarkers = new mapboxgl.Marker().setLngLat([0,0]).addTo(map);
-      oldmarkers.remove();
+      oldmarkers.remove();	  
+	  
       var list = createMarkerList(activities);
+	 
       list.features.forEach(function(marker) {
         // create a HTML element for each feature
         var el = document.createElement("div");
         el.className = "marker";
 
         // make a marker for each feature and add to the map
-        new mapboxgl.Marker(el)
+        var a = new mapboxgl.Marker(el)	
           .setLngLat(marker.geometry.coordinates)
           .setPopup(
             new mapboxgl.Popup({ offset: 25 }) // add popups
               .setHTML(
                 `<div class="card-body">
-                  <h5 class="card-title">${marker.properties.title}</h5>
+                  <h5 class="card-title text-dark">${marker.properties.title}</h5>
                   <a href="#" @click="showDetailModal(marker.properties.id)" class="btn btn-primary">Mehr Infos</a>
                 </div>`
               )
           )
-          .addTo(map);
+          .addTo(map);	  
       });
+	  
     }
   },
   data: () => {
@@ -125,17 +133,17 @@ export default {
   }
 };
 
-var transformToMarker = function(activity) {
+var transformToMarker = function(activity) { 
   return {
     type: "Feature",
     geometry: {
       type: "Point",
-      coordinates: activity.coordinates
+      coordinates: [activity.Latitude, activity.Longitude]
     },
     properties: {
-      title: activity.title,
-      description: activity.description,
-      id: activity.id
+      title: activity.Name,
+      description: activity.Kommentar,
+      id: activity.Aktivität_ID
     }
   };
 };
@@ -171,7 +179,17 @@ var activityMock = [
     id: "act1",
     coordinates: [7.262179, 51.443018],
     categoriesID: ["cat1", "cat2"]
+  },
+  {
+    title: "Sportanlagen Halle Markstraße",
+    description: "Auch nicht so geil",
+    duration: 30,
+    voting: 4,
+    id: "act1",
+    coordinates: [7.246549, 51.450068],
+    categoriesID: ["cat1", "cat2"]
   }
+  
 ];
 </script>
 

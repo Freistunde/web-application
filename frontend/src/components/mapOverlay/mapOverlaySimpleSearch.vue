@@ -8,13 +8,15 @@
         <b-btn variant="light" class="border border-light" @click="onSearch">
           <span class="fa fa-search"></span>
         </b-btn>
-        <b-btn variant="light" class="border border-light">Erweiterte Suche</b-btn>
+        <b-btn variant="light" class="border border-light" @click="onExtendedSearch">Erweiterte Suche</b-btn>
       </b-input-group-append>
     </b-input-group>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   data() {
     return {
@@ -46,14 +48,84 @@ export default {
   methods: {
     onSearch(evt) {
       evt.preventDefault();
-      this.$parent.$parent.$refs.map.showActivities();
-      alert(JSON.stringify(this.form));
+	  
+	  var info = this.form.searchstring;
+	  var activities;
+	  if(isNaN(info)) {	  
+	  axios
+        .get("http://localhost:3000/api/activities/place/" + info)
+        
+		.then(response => {				
+          this.activities = response.data;		 
+		  this.$parent.$parent.$refs.map.showActivities(this.activities);		  
+        })
+		.catch(error => {		   
+		  this.$parent.$parent.$refs.map.showActivities(this.activities);	
+		});
+	  }
+	  else{
+	  axios
+        .get("http://localhost:3000/api/activities/id/" + info)
+        
+		.then(response => {			  
+          this.activities = response.data;		 
+		  this.$parent.$parent.$refs.map.showActivities(this.activities);		  
+        })
+		.catch(error => {		   
+		  this.$parent.$parent.$refs.map.showActivities(this.activities);	
+		});
+		}
+	  
+	  
+	  
+      
+	  
+	  /** TODO
+	  /* Suche erstellen
+	  /*
+	  **/
+	  
+      //alert(JSON.stringify(this.form));
+	  //console.log("So Suche jetzt"+ form);
     },
     onExtendedSearch(evt) {
+	  this.$parent.$parent.$refs.map.clearMap();
       this.$emit("showextendedsearch");
     }
   }
 };
+
+var activityMock = [
+  {
+    title: "Hochschule",
+    description: "Nicht so geil",
+    duration: 30,
+    voting: 4,
+    id: "act1",
+    coordinates: [7.270899, 51.447625],
+    categoriesID: ["cat1", "cat2"]
+  },
+  {
+    title: "Ruhr Uni",
+    description: "Auch nicht so geil",
+    duration: 30,
+    voting: 4,
+    id: "act1",
+    coordinates: [7.262179, 51.443018],
+    categoriesID: ["cat1", "cat2"]
+  },
+  {
+    title: "Sportanlagen Halle Markstraße",
+    description: "Auch nicht so geil",
+    duration: 30,
+    voting: 4,
+    id: "act1",
+    coordinates: [7.246549, 51.450068],
+    categoriesID: ["cat1", "cat2"]
+  }
+  
+];
+
 </script>
 
 <style lang="scss">

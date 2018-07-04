@@ -65,7 +65,7 @@ router.get('/id/:id', function(req,res,next) {
    */
 
  
-  var sql = 'SELECT * FROM Aktivität WHERE Aktivität_ID = ' + activityID;
+  var sql = 'SELECT Aktivität.*, Ort.* FROM Ort LEFT JOIN Aktivität ON Aktivität.Ort_ID = Ort.Ort_ID WHERE Aktivität_ID = ' + activityID;
  
   con.query(sql, function (err, activity) {
   if (err) throw err;
@@ -98,7 +98,7 @@ router.get('/place/:place', function(req,res,next) {
   /* TODO:
    * Search in database for activities with value "place" (see above) and set it below.
    */
-   var sql = 'SELECT Aktivität.* FROM Ort LEFT JOIN Aktivität ON Aktivität.Ort_ID = Ort.Ort_ID WHERE (Ort.Stadt = \''+place+'\')';
+   var sql = 'SELECT Aktivität.*, Ort.* FROM Ort LEFT JOIN Aktivität ON Aktivität.Ort_ID = Ort.Ort_ID WHERE (Ort.Stadt = \''+place+'\')';
  
   con.query(sql, function (err, activities) {
   if (err) throw err;
