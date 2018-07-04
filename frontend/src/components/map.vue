@@ -9,14 +9,16 @@
 import Mapbox from "mapbox-gl-vue";
 import * as mapboxgl from "mapbox-gl";
 
+
+
 export default {
   components: {
-    Mapbox
+    Mapbox	
   },
   methods: {
     mapInitialized(map) {
       this.map = map;
-	  this.Markers = [];
+	  
       //this.showActivities(activityMock);
     },
     mapLoad(map) {
@@ -74,9 +76,15 @@ export default {
     showActivities: function(activities) {
       var map = this.map;	  
       console.log('Adding Activities');
-	 
+	
       var oldmarkers = new mapboxgl.Marker().setLngLat([0,0]).addTo(map);
       oldmarkers.remove();	  
+	  
+	  //if(map.hasLayer(layer)){
+	  //  map.removeLayer(layer);
+	  //}
+	  
+	  
 	  
       var list = createMarkerList(activities);
 	 
@@ -97,7 +105,9 @@ export default {
                 </div>`
               )
           )
-          .addTo(map);	  
+          .addTo(map);
+
+		    
       });
 	  
     }

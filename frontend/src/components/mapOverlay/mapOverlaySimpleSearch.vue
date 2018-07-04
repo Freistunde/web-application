@@ -90,6 +90,7 @@ export default {
     },
     onExtendedSearch(evt) {
 	  this.$parent.$parent.$refs.map.clearMap();
+	  //location.reload();
       this.$emit("showextendedsearch");
     }
   }

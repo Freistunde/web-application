@@ -55,6 +55,26 @@ router.get('/', function(req, res, next) {
   res.status(200).send(activityData);
 });
 
+// POST /api/activities/
+router.post('/', function(req, res) {
+
+  /* TODO:
+   * create an activity and add to the database
+   */
+  var sql = 'INSERT INTO Aktivität (Aktivität_ID, Name, Wetterabhängigkeit, Rating, Personenanzahl_min, Personenanzahl_max, Kommentar, Ort_ID, Zeiten_ID) VALUES ('+req.body.ID+', \''+req.body.Name+'\', \''+req.body.Wetter+'\', 3, 2, 5, \'Hahahahah\', 4, 1)';
+  con.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log("1 record inserted");
+  });
+   
+   
+  res.json({ message: 'Bear created!'+req.body.Name });
+  
+  
+  
+});
+
+
 // GET /api/activities/id/:id
 router.get('/id/:id', function(req,res,next) {
 

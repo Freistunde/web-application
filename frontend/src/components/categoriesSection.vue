@@ -25,7 +25,7 @@
               {{category.Beschreibung}}
             </p>
             <small v-if="category.childs" class="text-muted">{{category.childs}} Aktivitäten</small>
-            <b-button @click="setview(category.Kat_ID)" variant="primary">Go somewhere</b-button>
+            <b-button @click="setview(category.Kat_ID)" variant="primary">Details</b-button>
           </b-card>
         </b-card-group>
       </div>
@@ -40,8 +40,8 @@
             <p class="card-text" id="catsford">
               Testtext
             </p>
-            <small class="text-muted">Aktivitäten</small>
-            <b-button @click="resetview" variant="primary">Go somewhere</b-button>
+            <small class="text-muted">Aktivitäten</small></br></br>
+            <b-button @click="resetview" variant="primary">Zurück</b-button>
           </b-card>
         </b-card-group>
       </div>
