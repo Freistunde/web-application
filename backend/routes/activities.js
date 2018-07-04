@@ -98,14 +98,17 @@ router.get('/place/:place', function(req,res,next) {
   /* TODO:
    * Search in database for activities with value "place" (see above) and set it below.
    */
-
-  var activities = [];
-
+   var sql = 'SELECT Aktivität.* FROM Ort LEFT JOIN Aktivität ON Aktivität.Ort_ID = Ort.Ort_ID WHERE (Ort.Stadt = \''+place+'\')';
+ 
+  con.query(sql, function (err, activities) {
+  if (err) throw err;
   if(activities.length != -1) {
     res.status(200).send(activities);
   } else {
     res.status(400).send('No activity found');
-  }
+  }	
+  });
+    
 });
 
 // GET /api/activities/duration/:duration

@@ -18,6 +18,7 @@
     </div>
     <div class="row w-100 no-gutters p-2">
       <div v-show="!detailedView">
+	    <p class="text-dark border-0" id="ViewCategories">  </p>
         <b-card-group columns>
           <b-card class="text-dark border-0" v-for="category in categories" :key="category.Kat_ID" :title="category.Name" :img-src="'http://localhost:3000/api/categories/img/' + category.Kat_ID" img-fluid :img-alt="category.Kat_ID" img-top>
             <p v-if="category.Beschreibung" class="card-text">
@@ -68,8 +69,8 @@ export default {
   },
   created() {
     var el = this.$el;
-    axios.get("http://localhost:3000/api/categories/").then(response => {
-      this.categories = response.data;
+    axios.get("http://localhost:3000/api/categories/").then(response => {     
+	  this.categories = response.data;
     });
 
     this.debouncedSearch = _.debounce(this.search, 500);
@@ -78,9 +79,15 @@ export default {
     search: function() {
       axios
         .get("http://localhost:3000/api/categories/search/" + this.searchbar)
-        .then(response => {
+        .then(response => {	
+	document.getElementById("ViewCategories").innerHTML = "";		
           this.categories = response.data;
-        });
+        })
+		.catch(error => {
+		  this.categories = null;
+		  document.getElementById("ViewCategories").innerHTML = "No Categories found";
+		  console.log(error.response.status);
+		});
     },
     quartered: function(offset) {
       return this.categories.filter((cat, idx) => (idx - offset) % 4 === 0);

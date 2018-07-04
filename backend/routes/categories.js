@@ -119,12 +119,11 @@ router.get('/img/:categoryid', function(req, res, next) {
  
   con.query(sql, function (err, sqlresult) {
   if (err) throw err;
-  if (!sqlresult.length) res.status(400).send('No category found');   
+  if (!sqlresult.length) res.status(404).send('No category found');   
 	else img = sqlresult[0].imgUrl;
-	console.log('Das ist das Bild:'+sqlresult[0].imgUrl);	
 	
-	if(img) {
-	  res.status(200).sendfile('assets/'+img);
+	if(img) {		
+	  res.status(200).sendFile(path.resolve(__dirname+'/../assets/'+img));
       //res.status(200).contentType('image').end(img, 'binary');
     } else {	  
       res.status(404).send('No image found');
@@ -145,26 +144,35 @@ router.get('/search/:query', function(req, res, next) {
    */
 
   var results;
-  var sql = 'SELECT * FROM Kategorie WHERE Name Like \'%' + q +'%\'';
+  var sql = 'SELECT * FROM Kategorie WHERE Name Like \'%' + q +'%\' OR Beschreibung Like \'%' + q +'%\'';
  
   con.query(sql, function (err, sqlresult) {
   if (err) throw err;
   if (!sqlresult.length) res.status(404).send('No category found');   
-	else results = sqlresult;	
-	
-	if (typeof results !== "undefined") {
-      res.status(200).send(results);
-    } else {
-	  //res.status(200).send(results);
-      res.status(404).send('No categories found');
-    }
+	else res.status(200).send(sqlresult);		
   });
 
 });
 router.get('/search/', function(req, res, next) {
+  res.status(200).send(categoryData);    
+});
 
-  res.status(200).send(categoryData);
-  console.log("test");   
+
+// GET /api/categories/activities
+router.get('/:id/activities/', function(req, res, next) {
+
+  var id = req.params.id;
+
+  var sql = 'SELECT Aktivität.* FROM Aktivität '+
+			'LEFT JOIN Kategorie_Aktivität ON Aktivität.Aktivität_ID = Kategorie_Aktivität.Aktivität_ID '+
+			'LEFT JOIN Kategorie ON Kategorie_Aktivität.Kat_ID = Kategorie.Kat_ID '+
+			'WHERE (Kategorie.Kat_ID = '+id+')';
+ 
+  con.query(sql, function (err, sqlresult) {
+  if (err) throw err;
+  if (!sqlresult.length) res.status(404).send('No activities found');   
+	else res.status(200).send(sqlresult);		
+  });
 });
 
 module.exports = router;
